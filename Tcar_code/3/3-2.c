@@ -1,0 +1,96 @@
+/* ブザーをドレミファソラシドで鳴らす */
+
+#include <tk/tkernel.h>
+#include <tm/tmonitor.h>
+
+// GPIOポートH
+#define GPIOH_BASE (0x400C0700)
+#define PHCR    (GPIOH_BASE + 0x04)
+#define PHFR3   (GPIOH_BASE + 0x10)
+#define PHIE    (GPIOH_BASE + 0x38)
+
+// MPT2タイマ
+#define	MT2_BASE	(0x400C7200UL)
+#define	MT2EN   (MT2_BASE + 0x00)
+#define	MT2RUN	(MT2_BASE + 0x04)
+#define	MT2IGCR	(MT2_BASE + 0x30)
+#define	MT2IGOCR	(MT2_BASE + 0x40)
+#define	MT2IGRG2	(MT2_BASE + 0x44)
+#define	MT2IGRG3	(MT2_BASE + 0x48)
+#define	MT2IGRG4	(MT2_BASE + 0x4C)
+
+
+EXPORT	INT	usermain( void )
+{
+  // MTP2初期設定
+  *(_UW*)MT2EN     |= 0b10000001;
+  *(_UW*)MT2IGOCR  |= (1<<1);
+  *(_UW*)MT2IGOCR  &= ~(1<<5);
+  *(_UW*)MT2IGCR   &= 0b11010000;  // 0b11010000
+
+  // 端子をMTP2に設定
+  *(_UW*)PHFR3   |=  (1<<2);
+  *(_UW*)PHIE    &=  ~(1<<2);
+  *(_UW*)PHCR   |=  (1<<2);
+  
+  // MTP2 出力波形の設定 
+  *(_UW*)MT2IGRG2  = 1;
+
+  *(_UW*)MT2IGRG4  = 17207; 
+  *(_UW*)MT2IGRG3  = 8603;
+
+  *(_UW*)MT2RUN    |= 0b101;
+  tk_dly_tsk(500);
+  *(_UW*)MT2RUN    &= ~(0b101); 
+
+  *(_UW*)MT2IGRG4  = 15335;
+  *(_UW*)MT2IGRG3  = 7667;
+
+  *(_UW*)MT2RUN    |= 0b101;   
+  tk_dly_tsk(500);
+  *(_UW*)MT2RUN    &= ~(0b101);
+
+  *(_UW*)MT2IGRG4  = 13643;
+  *(_UW*)MT2IGRG3  = 6821;
+
+  *(_UW*)MT2RUN    |= 0b101;   
+  tk_dly_tsk(500);
+  *(_UW*)MT2RUN    &= ~(0b101);
+
+  *(_UW*)MT2IGRG4  = 12887;
+  *(_UW*)MT2IGRG3  = 6443;
+
+  *(_UW*)MT2RUN    |= 0b101;   
+  tk_dly_tsk(500);
+  *(_UW*)MT2RUN    &= ~(0b101);
+
+  *(_UW*)MT2IGRG4  = 11483;
+  *(_UW*)MT2IGRG3  = 5742;
+
+  *(_UW*)MT2RUN    |= 0b101;   
+  tk_dly_tsk(500);
+  *(_UW*)MT2RUN    &= ~(0b101);
+
+  *(_UW*)MT2IGRG4  = 10223; 
+  *(_UW*)MT2IGRG3  = 5111;
+
+  *(_UW*)MT2RUN    |= 0b101;   
+  tk_dly_tsk(500);
+  *(_UW*)MT2RUN    &= ~(0b101);
+
+  *(_UW*)MT2IGRG4  = 9107;
+  *(_UW*)MT2IGRG3  = 4553;
+
+  *(_UW*)MT2RUN    |= 0b101;  
+  tk_dly_tsk(500);
+  *(_UW*)MT2RUN    &= ~(0b101);
+
+  *(_UW*)MT2IGRG4  = 8603;
+  *(_UW*)MT2IGRG3  = 4302;
+
+  *(_UW*)MT2RUN    |= 0b101;  
+  tk_dly_tsk(500);
+  *(_UW*)MT2RUN    &= ~(0b101);
+
+  return 0;
+}

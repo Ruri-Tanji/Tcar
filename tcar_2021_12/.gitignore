@@ -1,0 +1,6 @@
+﻿*.d
+*.map
+*.elf
+*.ind
+*.emSession
+/Output/
